@@ -33,7 +33,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
       {profiles.length === 0 ? (
         <CreateProfile />
       ) : (
-        profiles.map((profile) => <ProfileForm key={profile.id} profile={profile} />)
+        profiles.map((profile) => <ProfileForm key={profile.id} profile={profile} hasResume={Boolean(resume)} />)
       )}
     </div>
   );

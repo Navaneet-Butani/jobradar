@@ -11,6 +11,8 @@ from ...decorators.api_decorators import log_api_call, standardize_response
 from ...decorators.auth_decorators import get_current_verified_user
 from ...models import UserDB
 from .service import ProfilesService
+from ..resume.service import ResumeService
+from ...services.resume_profile import suggest_profile
 from .schema import JobProfileCreateRequest, JobProfileUpdateRequest, JobProfileResponse
 
 router = APIRouter(prefix="/v1/profiles", tags=["profiles"])
@@ -43,6 +45,21 @@ async def create_profile(
     except Exception:
         await session.rollback()
         raise
+
+
+@router.post("/suggest-from-resume")
+@log_api_call()
+@standardize_response(success_message="Profile suggestion generated")
+async def suggest_from_resume(
+    session: AsyncSession = Depends(get_db_session),
+    current_user: UserDB = Depends(get_current_verified_user),
+):
+    """Profile fields suggested from the user's uploaded resume. Never saves:
+    the UI fills the form and the user reviews and saves it."""
+    resume = await ResumeService().get_resume(current_user.id, session)
+    if resume is None or not (resume.content_text or "").strip():
+        return APIResponse.not_found("Upload your resume first (Profile page), then try again.")
+    return APIResponse.success(data=await suggest_profile(resume.content_text))
 
 
 @router.get("/{profile_id}", response_model=JobProfileResponse)

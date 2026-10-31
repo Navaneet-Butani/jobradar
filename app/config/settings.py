@@ -97,6 +97,11 @@ class Settings(BaseSettings):
 
     # LLM re-rank (Phase 2 matching) — absent key means llm_rerank.py no-ops
     gemini_api_key: Optional[str] = Field(default=None, env="GEMINI_API_KEY")
+    # Or any OpenAI-compatible endpoint (takes precedence over Gemini when set):
+    # OpenAI, Groq, OpenRouter, or a local Ollama at http://localhost:11434/v1
+    llm_base_url: Optional[str] = Field(default=None, env="LLM_BASE_URL")
+    llm_api_key: Optional[str] = Field(default=None, env="LLM_API_KEY")
+    llm_model: str = Field(default="llama3.1", env="LLM_MODEL")
     
     # RemoteOK API Integration
     remoteok_base_url: str = Field(

@@ -1,8 +1,14 @@
-"""Shared Gemini Flash-Lite client — free-tier, JSON-safe, rate-limit-hardened.
+"""Shared LLM client — JSON-safe, rate-limit-hardened.
 
-Used by matching's LLM re-rank and by follow-up draft generation. Every
-caller must degrade gracefully: if GEMINI_API_KEY is absent or a call
-fails, return None and let the caller fall back to non-LLM behavior.
+Two backends, picked by configuration:
+  * LLM_BASE_URL set -> any OpenAI-compatible /chat/completions endpoint
+    (OpenAI, Groq, OpenRouter, Together, a local Ollama at
+    http://localhost:11434/v1, ...) with LLM_MODEL and optional LLM_API_KEY.
+  * otherwise GEMINI_API_KEY -> Gemini Flash-Lite (free tier).
+
+Used by matching's re-rank, the application packet, follow-up and outreach
+drafting, and resume-to-profile. Every caller must degrade gracefully: if no
+LLM is configured or a call fails, return None and fall back to non-LLM behavior.
 """
 
 import json
@@ -25,8 +31,12 @@ GEMINI_URL = (
 SECONDS_BETWEEN_CALLS = 4.5
 
 
+def _openai_compatible() -> bool:
+    return bool(settings.llm_base_url)
+
+
 def is_enabled() -> bool:
-    return bool(settings.gemini_api_key)
+    return _openai_compatible() or bool(settings.gemini_api_key)
 
 
 def _is_rate_limited(exc: BaseException) -> bool:
@@ -40,6 +50,21 @@ def _is_rate_limited(exc: BaseException) -> bool:
     reraise=True,
 )
 async def _call(prompt: str, client: httpx.AsyncClient, max_output_tokens: int) -> httpx.Response:
+    if _openai_compatible():
+        headers = {"Authorization": f"Bearer {settings.llm_api_key}"} if settings.llm_api_key else {}
+        response = await client.post(
+            settings.llm_base_url.rstrip("/") + "/chat/completions",
+            headers=headers,
+            json={
+                "model": settings.llm_model or "llama3.1",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.4,
+                "max_tokens": max_output_tokens,
+            },
+            timeout=60.0,  # local models can be slow
+        )
+        response.raise_for_status()
+        return response
     response = await client.post(
         GEMINI_URL,
         params={"key": settings.gemini_api_key},
@@ -58,6 +83,8 @@ async def _call(prompt: str, client: httpx.AsyncClient, max_output_tokens: int) 
 
 def _extract_text(response: httpx.Response) -> str:
     data = response.json()
+    if "choices" in data:  # OpenAI-compatible
+        return (data["choices"][0]["message"]["content"] or "").strip()
     return data["candidates"][0]["content"]["parts"][0]["text"].strip()
 
 
@@ -69,7 +96,7 @@ async def generate_text(prompt: str, client: httpx.AsyncClient, max_output_token
         response = await _call(prompt, client, max_output_tokens)
         return _extract_text(response)
     except Exception as e:
-        logger.warning(f"Gemini text generation failed: {e}")
+        logger.warning(f"LLM text generation failed: {e}")
         return None
 
 
@@ -83,5 +110,5 @@ async def generate_json(prompt: str, client: httpx.AsyncClient, max_output_token
         text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
         return json.loads(text)
     except Exception as e:
-        logger.warning(f"Gemini JSON generation failed: {e}")
+        logger.warning(f"LLM JSON generation failed: {e}")
         return None

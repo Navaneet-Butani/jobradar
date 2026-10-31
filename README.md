@@ -19,7 +19,8 @@
 - **Your geography.** Onsite cities, hybrid-acceptable metros, and India-eligible remote roles. US-only "remote" jobs are filtered out.
 - **The company list grows itself.** When any source mentions a company, JobRadar probes for its public ATS board and polls it directly from then on.
 - **Built for the application grind.** Kanban tracker with follow-up reminders, an application packet (tailored summary, pre-filled answers, recruiter contact), and paced outreach email sent from your own Gmail, with reply and bounce tracking over IMAP.
-- **Optional AI.** Add a free Gemini key to re-rank your top matches with a one-line "why this fits you" and to draft follow-ups. Without a key, everything still works on the rule-based scoring.
+- **Set up in a minute.** Upload your resume and press **Fill from resume**: skills, target titles, experience and cities are suggested for you to review.
+- **Bring any AI, or none.** A free Gemini key, any OpenAI-compatible API (Groq, OpenRouter, OpenAI), or a fully local model through **Ollama** re-ranks your top matches with a one-line "why this fits you", sharpens the resume autofill, and drafts follow-ups. Without one, everything still works on the rule-based scoring.
 - **Never auto-applies.** You review and press send, always.
 
 ## Quick start (Docker)
@@ -37,7 +38,7 @@ docker compose exec api python -m scripts.seed_companies
 docker compose exec api python -m scripts.run_ingest --sources ats,hirist,remotive,himalayas
 ```
 
-Log in, open **Profile**, and set your years of experience, skills, target titles and cities. The next ingest searches for exactly those, and the feed ranks against them. Run `python -m scripts.run_matching` to re-score existing jobs right away. Want to see the app first? `python -m scripts.seed_demo` creates a demo account with two example profiles.
+Log in, open **Profile**, upload your resume and press **Fill from resume** (or set skills, titles, experience and cities yourself). The next ingest searches for exactly those, and the feed ranks against them. Run `python -m scripts.run_matching` to re-score existing jobs right away. Want to see the app first? `python -m scripts.seed_demo` creates a demo account with two example profiles.
 
 <details>
 <summary>Without Docker (Python 3.12 + Node 22 + PostgreSQL)</summary>
@@ -65,7 +66,7 @@ Use Python 3.12, not 3.13+: pinned `asyncpg`/`pandas` builds have no wheels for 
 | API | Render free web service (`render.yaml` included) |
 | Web | Vercel hobby |
 | Email (optional) | Resend free tier, or any SMTP server |
-| AI (optional) | Gemini Flash free tier |
+| AI (optional) | Gemini Flash free tier, Groq free tier, or local Ollama |
 
 Step-by-step: **[docs/self-hosting.md](docs/self-hosting.md)**.
 

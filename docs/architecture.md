@@ -52,9 +52,13 @@ Each fetcher emits `RawJobData` (`app/models/source.py`) and hands batches to `J
 | Hard filters | `filters.py` | Location/remote scope, experience band and seniority ceiling, excluded keywords and companies, at least one must-have skill |
 | Score (0–100) | `scoring.py` | skills 35 · title 20 · experience 15 · location 10 · freshness 10 · salary 5 · source quality 5 |
 | Noise rules | `noise.py` | Staffing/C2H −15, stack spam −10, ghost reposts up to −15, mandatory CS degree −5 (if the profile sets `no_cs_degree`), preferred domain +5 |
-| LLM re-rank | `llm_rerank.py` | Optional (Gemini). Blends 70% rule score with 30% LLM score and adds a one-line reason |
+| LLM re-rank | `llm_rerank.py` | Optional. Blends 70% rule score with 30% LLM score and adds a one-line reason |
 
 Terms match on whole words (`contains_term`), so "go" doesn't match "good" and "java" doesn't match "javascript". Every component is stored in `matches.reasons`, which is what the UI's score breakdown shows.
+
+## LLM
+
+`app/services/llm/gemini.py` is the one client every AI feature uses. It talks to any OpenAI-compatible `/chat/completions` endpoint when `LLM_BASE_URL` is set, otherwise to Gemini. Every caller degrades to non-AI behaviour when no LLM is configured or a call fails. `app/services/resume_profile.py` suggests profile fields from a resume: heuristics first, then a validated LLM overlay.
 
 ## API
 

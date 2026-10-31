@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, FloppyDisk } from "@phosphor-icons/react";
+import { CheckCircle, FloppyDisk, MagicWand } from "@phosphor-icons/react";
 import type { JobProfile } from "@/lib/types";
 import { TagInput } from "@/components/TagInput";
 import { Field } from "@/components/Field";
@@ -61,18 +61,57 @@ function Toggle({
   );
 }
 
-export function ProfileForm({ profile }: { profile: JobProfile }) {
+type Suggestion = {
+  years_exp: number | null;
+  must_have_skills: string[];
+  nice_to_have_skills: string[];
+  target_titles: string[];
+  cities: string[];
+};
+
+export function ProfileForm({ profile, hasResume = false }: { profile: JobProfile; hasResume?: boolean }) {
   const router = useRouter();
   const [form, setForm] = useState(profile);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filling, setFilling] = useState(false);
+  const [filledNote, setFilledNote] = useState<string | null>(null);
 
   const dirty = JSON.stringify(form) !== JSON.stringify(profile);
 
   function set<K extends keyof JobProfile>(key: K, value: JobProfile[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     setSavedAt(null);
+  }
+
+  /** Fill the form from the resume; the user reviews, then saves as usual. */
+  async function fillFromResume() {
+    setFilling(true);
+    setError(null);
+    setFilledNote(null);
+    try {
+      const res = await fetch("/api/profiles/suggest", { method: "POST" });
+      const body = await res.json();
+      if (!res.ok || !body.status) throw new Error(body.error_message ?? "Couldn't read your resume");
+      const { source, suggestion } = body.data as { source: string; suggestion: Suggestion };
+      setForm((f) => ({
+        ...f,
+        years_exp: suggestion.years_exp ?? f.years_exp,
+        must_have_skills: suggestion.must_have_skills.length ? suggestion.must_have_skills : f.must_have_skills,
+        nice_to_have_skills: suggestion.nice_to_have_skills.length ? suggestion.nice_to_have_skills : f.nice_to_have_skills,
+        target_titles: suggestion.target_titles.length ? suggestion.target_titles : f.target_titles,
+        cities: f.cities.length ? f.cities : suggestion.cities,
+      }));
+      setSavedAt(null);
+      setFilledNote(
+        source === "llm" ? "Filled from your resume with AI. Review, then save." : "Filled from your resume. Review, then save."
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't read your resume");
+    } finally {
+      setFilling(false);
+    }
   }
 
   async function save() {
@@ -114,6 +153,19 @@ export function ProfileForm({ profile }: { profile: JobProfile }) {
             <span role="alert" className="text-sm text-danger">
               {error}
             </span>
+          )}
+          {!error && !savedAt && filledNote && <span className="text-sm text-ink-soft">{filledNote}</span>}
+          {hasResume && (
+            <button
+              type="button"
+              onClick={fillFromResume}
+              disabled={filling}
+              title="Suggest skills, titles, experience and cities from your uploaded resume"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-bg-sunken disabled:opacity-40"
+            >
+              <MagicWand size={15} />
+              {filling ? "Reading resume…" : "Fill from resume"}
+            </button>
           )}
           {!error && savedAt && (
             <span className="inline-flex items-center gap-1.5 text-sm text-score-strong">

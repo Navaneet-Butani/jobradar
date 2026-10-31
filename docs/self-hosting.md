@@ -18,7 +18,7 @@ Generate one `SECRET_KEY` and use the **same value everywhere** (Render and GitH
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Optional: a `GEMINI_API_KEY` from Google AI Studio (free tier) for re-ranking and drafting, and a `REDIS_URL` from Upstash for caching.
+Optional: an LLM for re-ranking, resume autofill and drafting. Either a `GEMINI_API_KEY` (Google AI Studio, free tier) or any OpenAI-compatible API through `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`, e.g. Groq's free tier or a local Ollama (`http://localhost:11434/v1`). Also optional: a `REDIS_URL` from Upstash for caching.
 
 ## 3. API: Render
 
