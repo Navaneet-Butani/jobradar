@@ -55,6 +55,8 @@ In your fork, go to **Settings → Secrets and variables → Actions**:
 
 Change which sources each ingest run pulls with the variables `INGEST_SOURCES_FULL`, `INGEST_SOURCES_MIDDAY` and `INGEST_SOURCES_EVENING`. Run any workflow manually from the **Actions** tab.
 
+Chat alerts need no setup here: each user pastes a Telegram, Discord, Slack or ntfy webhook into **Profile → Alerts**, and every ingest run pushes their new matches scoring 60+ (`NOTIFY_MIN_SCORE`). Set the repo variable `FRONTEND_URL` so the alert links point at your web app.
+
 ## 6. Email (optional)
 
 System email covers invites, digests and password resets:

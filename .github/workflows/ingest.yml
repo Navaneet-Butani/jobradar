@@ -8,7 +8,7 @@ name: ingest
 # adding the secrets below. Manual runs (Run workflow) always work.
 #
 # Secrets: DATABASE_URL (Supabase TRANSACTION pooler, port 6543), SECRET_KEY,
-#          optional REDIS_URL, optional GEMINI_API_KEY (LLM re-rank).
+#          optional REDIS_URL, optional GEMINI_API_KEY or LLM_BASE_URL/LLM_API_KEY.
 # Variables (optional): INGEST_SOURCES_FULL / INGEST_SOURCES_MIDDAY /
 #          INGEST_SOURCES_EVENING to change which sources each run pulls.
 
@@ -34,6 +34,10 @@ jobs:
       REDIS_URL: ${{ secrets.REDIS_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL }}   # links in chat alerts
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

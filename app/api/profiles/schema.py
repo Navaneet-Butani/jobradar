@@ -3,7 +3,17 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+from ...services.notify import ALLOWED_HOSTS, webhook_kind
+
+
+def _check_webhook(value: Optional[str]) -> Optional[str]:
+    if value is None or not value.strip():
+        return None
+    if not webhook_kind(value):
+        raise ValueError("Use an https webhook URL from: " + ", ".join(sorted(set(ALLOWED_HOSTS))))
+    return value.strip()
 
 
 class JobProfileCreateRequest(BaseModel):
@@ -25,6 +35,9 @@ class JobProfileCreateRequest(BaseModel):
     include_staffing: bool = False
     domain_keywords: List[str] = Field(default_factory=list)
     no_cs_degree: bool = False
+    notify_webhook_url: Optional[str] = None
+
+    _webhook = field_validator("notify_webhook_url")(_check_webhook)
     notice_period_days: Optional[int] = Field(None, ge=0, le=365)
     current_ctc_inr: Optional[float] = Field(None, ge=0)
     expected_ctc_inr: Optional[float] = Field(None, ge=0)
@@ -51,6 +64,9 @@ class JobProfileUpdateRequest(BaseModel):
     include_staffing: Optional[bool] = None
     domain_keywords: Optional[List[str]] = None
     no_cs_degree: Optional[bool] = None
+    notify_webhook_url: Optional[str] = None
+
+    _webhook = field_validator("notify_webhook_url")(_check_webhook)
     notice_period_days: Optional[int] = Field(None, ge=0, le=365)
     current_ctc_inr: Optional[float] = Field(None, ge=0)
     expected_ctc_inr: Optional[float] = Field(None, ge=0)
@@ -79,6 +95,7 @@ class JobProfileResponse(BaseModel):
     include_staffing: bool
     domain_keywords: List[str]
     no_cs_degree: bool
+    notify_webhook_url: Optional[str] = None
     notice_period_days: Optional[int]
     current_ctc_inr: Optional[float]
     expected_ctc_inr: Optional[float]

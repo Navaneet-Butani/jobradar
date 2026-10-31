@@ -109,7 +109,10 @@ def create_app() -> FastAPI:
             error_code="VALIDATION_ERROR",
             status_code=422,
             details={
-                "validation_errors": exc.errors()
+                # ctx can hold the raw exception object, which is not JSON serialisable
+                "validation_errors": [
+                    {"loc": e.get("loc"), "msg": e.get("msg"), "type": e.get("type")} for e in exc.errors()
+                ]
             }
         )
     

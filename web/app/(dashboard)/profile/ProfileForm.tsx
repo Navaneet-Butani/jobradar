@@ -130,7 +130,9 @@ export function ProfileForm({ profile, hasResume = false }: { profile: JobProfil
 
     setSaving(false);
     if (!res.ok) {
-      setError("Couldn't save, try again");
+      const body = await res.json().catch(() => null);
+      const detail = body?.details?.validation_errors?.[0]?.msg ?? body?.error_message;
+      setError(detail ? String(detail).replace(/^Value error, /, "") : "Couldn't save, try again");
       return;
     }
     setSavedAt(Date.now());
@@ -315,6 +317,19 @@ export function ProfileForm({ profile, hasResume = false }: { profile: JobProfil
               onChange={(v) => set("expected_ctc_inr", v ? Number(v) : null)}
             />
           </div>
+        </Fieldset>
+
+        <Fieldset
+          legend="Alerts"
+          description="Get new matches scoring 60+ pushed to your phone after every ingest. Each job is sent once."
+        >
+          <Field
+            label="Webhook URL (Telegram, Discord, Slack or ntfy)"
+            value={form.notify_webhook_url ?? ""}
+            onChange={(v) => set("notify_webhook_url", v.trim() ? v : null)}
+            placeholder="https://ntfy.sh/your-private-topic"
+            hint="Telegram: https://api.telegram.org/bot<token>/sendMessage?chat_id=<id> · Discord: channel webhook URL · ntfy: install the app and pick a hard-to-guess topic."
+          />
         </Fieldset>
 
         <Fieldset

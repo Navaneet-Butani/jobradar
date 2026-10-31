@@ -64,6 +64,7 @@ export type JobProfile = {
   include_staffing: boolean;
   domain_keywords: string[];
   no_cs_degree: boolean;
+  notify_webhook_url: string | null;
   notice_period_days: number | null;
   current_ctc_inr: number | null;
   expected_ctc_inr: number | null;

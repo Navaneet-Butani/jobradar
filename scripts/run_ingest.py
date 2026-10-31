@@ -32,6 +32,7 @@ from app.core.database import db
 from app.core.redis import redis_manager
 from app.services.enrichment import backfill_from_raw
 from app.services.matching import run_matching
+from app.services.notify import notify_new_matches
 
 ALL_SOURCES = ['instahyre', 'ats', 'jobspy', 'remoteok', 'arbeitnow', 'remotive', 'himalayas',
                'hirist', 'linkedin']
@@ -277,6 +278,15 @@ async def main() -> int:
                 # Ingest succeeded; a matching failure shouldn't discard that work
                 # or fail the workflow. Surface it and move on.
                 print(f"  matching failed: {e}")
+            else:
+                try:
+                    async with db.get_session() as session:
+                        sent = await notify_new_matches(session)
+                    if sent["profiles"]:
+                        print(f"  alerts: {sent['sent']} matches pushed to {sent['profiles']} profile webhook(s)"
+                              + (f", {sent['failed']} failed" if sent["failed"] else ""))
+                except Exception as e:
+                    print(f"  alerts failed: {e}")
 
         if all_failed:
             print("All sources failed.")

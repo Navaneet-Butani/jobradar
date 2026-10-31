@@ -102,6 +102,9 @@ class Settings(BaseSettings):
     llm_base_url: Optional[str] = Field(default=None, env="LLM_BASE_URL")
     llm_api_key: Optional[str] = Field(default=None, env="LLM_API_KEY")
     llm_model: str = Field(default="llama3.1", env="LLM_MODEL")
+
+    # Chat alerts: only matches scoring at least this are pushed to profile webhooks
+    notify_min_score: float = Field(default=60, env="NOTIFY_MIN_SCORE")
     
     # RemoteOK API Integration
     remoteok_base_url: str = Field(

@@ -854,6 +854,8 @@ class JobProfileDB(Base, TimestampMixinDB):
     domain_keywords: Mapped[list] = mapped_column(ARRAY(Text), nullable=False, default=list)
     # Penalise "CS degree mandatory" postings for people without one
     no_cs_degree: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Telegram / Discord / Slack / ntfy webhook for new-match alerts (app/services/notify.py)
+    notify_webhook_url: Mapped[Optional[str]] = mapped_column(Text)
 
     # Standard-answer prefills for the application packet (Phase 3 Task 3)
     notice_period_days: Mapped[Optional[int]] = mapped_column(Integer)
@@ -889,6 +891,7 @@ class MatchDB(Base):
         default='new',
     )
     surfaced_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime)  # pushed to the profile's webhook
     state_changed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     # Relationships

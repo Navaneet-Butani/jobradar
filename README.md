@@ -18,6 +18,7 @@
 - **An explainable score, not a black box.** Every match shows its breakdown: skills 35, title 20, experience 15, location 10, freshness 10, salary 5, source quality 5. India-specific noise is penalised: staffing/C2H listings, "stack spam" job descriptions, ghost reposts, mandatory-CS-degree filters.
 - **Your geography.** Onsite cities, hybrid-acceptable metros, and India-eligible remote roles. US-only "remote" jobs are filtered out.
 - **The company list grows itself.** When any source mentions a company, JobRadar probes for its public ATS board and polls it directly from then on.
+- **Alerts on your phone.** New strong matches are pushed to Telegram, Discord, Slack or ntfy after every ingest, each job once.
 - **Built for the application grind.** Kanban tracker with follow-up reminders, an application packet (tailored summary, pre-filled answers, recruiter contact), and paced outreach email sent from your own Gmail, with reply and bounce tracking over IMAP.
 - **Set up in a minute.** Upload your resume and press **Fill from resume**: skills, target titles, experience and cities are suggested for you to review.
 - **Bring any AI, or none.** A free Gemini key, any OpenAI-compatible API (Groq, OpenRouter, OpenAI), or a fully local model through **Ollama** re-ranks your top matches with a one-line "why this fits you", sharpens the resume autofill, and drafts follow-ups. Without one, everything still works on the rule-based scoring.
