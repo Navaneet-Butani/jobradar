@@ -1,7 +1,7 @@
 """ATS source configuration.
 
-Greenhouse, Lever, and Ashby all get normalized to the same shape before
-reaching FieldMapping — each provider module injects _company_name,
+Greenhouse, Lever, Ashby, SmartRecruiters and Recruitee all get normalized
+to the same shape before reaching FieldMapping — each provider module injects _company_name,
 _apply_url, _location, and (where available) _posted_date onto the raw
 job dict, so one FieldMapping covers all three.
 """
@@ -39,7 +39,7 @@ async def setup_ats_source() -> int:
         'monthly_quota': 3000000,
         'cost_per_call': 0.0000,
         'monthly_budget': 0.00,
-        'api_config': {'field_mapping': ATS_FIELD_MAPPING.dict(), 'providers': ['greenhouse', 'lever', 'ashby']},
+        'api_config': {'field_mapping': ATS_FIELD_MAPPING.dict(), 'providers': ['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'recruitee']},
         'field_mapping': ATS_FIELD_MAPPING.dict(),
     }
 

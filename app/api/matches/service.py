@@ -4,10 +4,11 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import func, select
+from sqlalchemy import false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...core.exceptions import NotFoundError, ValidationError
+from ...services.matching.filters import city_spellings
 from ...models import CompanyDB, JobDB, JobDetailDB, JobProfileDB, JobSourceDB, MatchDB
 from ...api.applications.service import ApplicationsService
 from .schema import MATCH_STATES, MatchJobResponse
@@ -124,9 +125,11 @@ class MatchesService:
             cities = (await session.execute(
                 select(JobProfileDB.cities).where(JobProfileDB.id == profile_id)
             )).scalar_one() or []
-            lowered = [c.lower() for c in cities]
-            query = query.where(func.lower(JobDB.city).in_(lowered))
-            count_query = count_query.where(func.lower(JobDB.city).in_(lowered))
+            # Every spelling, as a substring: "Hosur Road Bangalore" is Bengaluru.
+            patterns = [f"%{s}%" for c in cities for s in city_spellings(c)]
+            city_match = or_(*[func.lower(JobDB.city).like(p) for p in patterns]) if patterns else false()
+            query = query.where(city_match)
+            count_query = count_query.where(city_match)
 
         total_count = (await session.execute(count_query)).scalar_one()
 

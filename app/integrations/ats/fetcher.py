@@ -10,6 +10,8 @@ from .client import ATSClient, ATSAPIError
 from .greenhouse import fetch_greenhouse_jobs
 from .lever import fetch_lever_jobs
 from .ashby import fetch_ashby_jobs
+from .recruitee import fetch_recruitee_jobs
+from .smartrecruiters import fetch_smartrecruiters_jobs
 from .discovery import discover_and_save_ats
 from .config import build_source_config
 from ...models.source import RawJobData
@@ -33,6 +35,8 @@ PROVIDER_FETCHERS = {
     'greenhouse': fetch_greenhouse_jobs,
     'lever': fetch_lever_jobs,
     'ashby': fetch_ashby_jobs,
+    'smartrecruiters': fetch_smartrecruiters_jobs,
+    'recruitee': fetch_recruitee_jobs,
 }
 
 

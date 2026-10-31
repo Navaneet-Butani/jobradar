@@ -6,7 +6,7 @@ from typing import Optional
 
 from rapidfuzz import fuzz
 
-from .filters import contains_term, is_remote_eligible, skill_tokens, text_blob
+from .filters import canonical_city, contains_term, is_remote_eligible, skill_tokens, text_blob
 
 FRESHNESS_DECAY_DAYS = 21
 FRESHNESS_FULL_SCORE_HOURS = 48
@@ -101,9 +101,9 @@ def score_experience_fit(job: dict, profile: dict) -> float:
 
 
 def score_location_fit(job: dict, profile: dict) -> float:
-    city = (job.get("city") or "").lower()
-    cities = {c.lower() for c in profile.get("cities", [])}
-    metro_cities = {c.lower() for c in profile.get("metro_cities", [])}
+    city = canonical_city(job.get("city"))
+    cities = {canonical_city(c) for c in profile.get("cities", [])}
+    metro_cities = {canonical_city(c) for c in profile.get("metro_cities", [])}
 
     if city in cities:
         return 10.0

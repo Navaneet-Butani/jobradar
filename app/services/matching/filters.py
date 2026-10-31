@@ -37,6 +37,47 @@ def contains_term(term: str, blob: str) -> bool:
     return bool(term) and _term_pattern(term).search(blob) is not None
 
 
+# Spellings that refer to the same city. Sources disagree ("Bangalore" vs
+# "Bengaluru", "Gurgaon" vs "Gurugram") and some put an area first ("Hosur Road
+# Bangalore"), so cities are compared by canonical name, never as raw strings.
+CITY_ALIASES = {
+    "bengaluru": ["bangalore", "bengaluru", "blr"],
+    "mumbai": ["mumbai", "bombay", "navi mumbai", "thane"],
+    "delhi": ["delhi", "new delhi", "delhi ncr", "ncr"],
+    "gurugram": ["gurugram", "gurgaon"],
+    "noida": ["noida", "greater noida"],
+    "chennai": ["chennai", "madras"],
+    "kolkata": ["kolkata", "calcutta"],
+    "pune": ["pune", "poona"],
+    "vadodara": ["vadodara", "baroda"],
+    "mysuru": ["mysuru", "mysore"],
+    "thiruvananthapuram": ["thiruvananthapuram", "trivandrum"],
+    "kochi": ["kochi", "cochin"],
+    "hyderabad": ["hyderabad", "secunderabad"],
+    "ahmedabad": ["ahmedabad", "amdavad"],
+}
+_ALIAS_TO_CITY = {alias: canonical for canonical, aliases in CITY_ALIASES.items() for alias in aliases}
+
+
+def canonical_city(name: Optional[str]) -> str:
+    """'Hosur Road Bangalore' -> 'bengaluru'; unknown cities come back lowercased."""
+    text = (name or "").strip().lower()
+    if not text:
+        return ""
+    if text in _ALIAS_TO_CITY:
+        return _ALIAS_TO_CITY[text]
+    for alias, canonical in _ALIAS_TO_CITY.items():
+        if contains_term(alias, text):
+            return canonical
+    return text
+
+
+def city_spellings(name: str) -> list:
+    """Every spelling of a city, for matching it in SQL."""
+    canonical = canonical_city(name)
+    return CITY_ALIASES.get(canonical, [canonical]) if canonical else []
+
+
 def skill_tokens(job: dict) -> set:
     tokens = set()
     for s in job.get("skills_extracted") or []:
@@ -58,9 +99,9 @@ def is_remote_eligible(job: dict, profile: dict) -> bool:
 
 def check_location(job: dict, profile: dict) -> Tuple[bool, Optional[str]]:
     city = (job.get("city") or "").strip()
-    cities = {c.lower() for c in profile.get("cities", [])}
-    metro_cities = {c.lower() for c in profile.get("metro_cities", [])}
-    city_lower = city.lower()
+    cities = {canonical_city(c) for c in profile.get("cities", [])}
+    metro_cities = {canonical_city(c) for c in profile.get("metro_cities", [])}
+    city_lower = canonical_city(city)
 
     remote_eligible = is_remote_eligible(job, profile)
 

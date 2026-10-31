@@ -3,7 +3,7 @@
 
     python -m scripts.seed_companies [--file data/companies.csv]
 
-Columns: name, ats_type (greenhouse | lever | ashby, optional), ats_slug,
+Columns: name, ats_type (greenhouse | lever | ashby | smartrecruiters | recruitee, optional), ats_slug,
 region (free text, informational). Rows with an ATS board are polled on the
 next `run_ingest --sources ats`; rows without one get auto-discovered.
 
@@ -24,7 +24,7 @@ from app.core.database import db
 from app.repositories.company_repository import CompanyRepository
 
 DEFAULT_FILE = Path(__file__).parent.parent / "data" / "companies.csv"
-ATS_TYPES = {"greenhouse", "lever", "ashby"}
+ATS_TYPES = {"greenhouse", "lever", "ashby", "smartrecruiters", "recruitee"}
 
 
 def read_rows(path: Path):

@@ -84,3 +84,14 @@ def test_role_filter_allowlist():
 def test_search_targets_helpers():
     assert _dedupe(["Pune", "pune ", "Mumbai", ""], 5) == ["Pune", "Mumbai"]
     assert SearchTargets().locations(["Pune", "Austin, TX"]) == ["Pune, India", "Austin, TX"]
+
+
+def test_city_spellings_are_one_city():
+    from app.services.matching.filters import canonical_city
+    assert canonical_city("Bangalore") == canonical_city("Bengaluru") == "bengaluru"
+    assert canonical_city("Hosur Road Bangalore") == "bengaluru"
+    assert canonical_city("Gurgaon") == "gurugram"
+    assert canonical_city("Coimbatore") == "coimbatore"
+    profile = {**PROFILE, "cities": ["Bengaluru"]}
+    assert passes_hard_filters(job(city="Bangalore"), profile)[0]
+    assert score_job(job(city="Bangalore"), profile)["breakdown"]["location_fit"] == 10

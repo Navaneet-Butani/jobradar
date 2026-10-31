@@ -35,7 +35,7 @@ Each fetcher emits `RawJobData` (`app/models/source.py`) and hands batches to `J
 
 **What gets searched** for the keyword-driven sources (JobSpy, LinkedIn, Hirist) comes from `app/services/search_targets.py`: the union of all active profiles' `cities`, `metro_cities` and `target_titles`. With no profiles yet, it falls back to India's main tech hubs plus the search terms of the role categories enabled under **Settings → Scraping**. The ATS adapter walks whole company boards, so it filters titles through the role allowlist in `app/services/role_filter.py`.
 
-**ATS discovery** (`app/integrations/ats/discovery.py`): when any source surfaces a company without a known board, discovery probes Greenhouse, Lever and Ashby for slug variants. A hit is polled directly from then on. Ambiguous short slugs ("pine" for "Pine Labs") are only accepted when Greenhouse's board name matches the company.
+**ATS discovery** (`app/integrations/ats/discovery.py`): when any source surfaces a company without a known board, discovery probes Greenhouse, Lever, Ashby, SmartRecruiters and Recruitee for slug variants. A hit is polled directly from then on. Ambiguous short slugs ("pine" for "Pine Labs") are only accepted when Greenhouse's board name matches the company, and SmartRecruiters/Recruitee hits always require a matching display name.
 
 ## Deduplication
 
@@ -54,7 +54,7 @@ Each fetcher emits `RawJobData` (`app/models/source.py`) and hands batches to `J
 | Noise rules | `noise.py` | Staffing/C2H −15, stack spam −10, ghost reposts up to −15, mandatory CS degree −5 (if the profile sets `no_cs_degree`), preferred domain +5 |
 | LLM re-rank | `llm_rerank.py` | Optional. Blends 70% rule score with 30% LLM score and adds a one-line reason |
 
-Terms match on whole words (`contains_term`), so "go" doesn't match "good" and "java" doesn't match "javascript". Every component is stored in `matches.reasons`, which is what the UI's score breakdown shows.
+Cities are compared by canonical name (`canonical_city`: Bangalore = Bengaluru = "Hosur Road Bangalore", Gurgaon = Gurugram). Terms match on whole words (`contains_term`), so "go" doesn't match "good" and "java" doesn't match "javascript". Every component is stored in `matches.reasons`, which is what the UI's score breakdown shows.
 
 ## LLM
 

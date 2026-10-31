@@ -4,7 +4,7 @@ Thanks for helping! Small, focused pull requests are the easiest to review.
 
 ## Good first contributions
 
-- **Companies:** add rows to `data/companies.csv` (`name,ats_type,ats_slug,region`). To find a slug, open the company's careers page. A URL like `boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>` or `jobs.ashbyhq.com/<slug>` gives you both the type and the slug.
+- **Companies:** add rows to `data/companies.csv` (`name,ats_type,ats_slug,region`). To find a slug, open the company's careers page. A URL like `boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>`, `jobs.ashbyhq.com/<slug>`, `jobs.smartrecruiters.com/<slug>` or `<slug>.recruitee.com` gives you both the type and the slug.
 - **Sources:** see [docs/adding-a-source.md](docs/adding-a-source.md). Indian ATS platforms (Zoho Recruit, Keka, Darwinbox, Freshteam) are especially welcome.
 - **Matching rules:** false positives and negatives in the feed. Include the job title and description snippet that was mis-scored.
 

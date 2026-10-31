@@ -17,6 +17,7 @@ from .client import ATSClient, ATSNotFoundError, ATSAPIError
 from .greenhouse import fetch_greenhouse_jobs
 from .lever import fetch_lever_jobs
 from .ashby import fetch_ashby_jobs
+from . import recruitee, smartrecruiters
 from ...repositories.company_repository import CompanyRepository
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,18 @@ def _is_ambiguous(slug: str, company_name: str) -> bool:
     return slug != re.sub(r'[^a-z0-9]+', '', company_name.lower()) and '-' not in slug and len(slug) < 8
 
 
+def _names_match(board_name: str, company_name: str) -> bool:
+    """Board name equals the company, or contains every word of it ("Bosch" in
+    "Bosch Group"). Not the reverse: "Pine" must not match "Pine Labs"."""
+    board, company = board_name.lower().strip(), company_name.lower().strip()
+    if not board or not company:
+        return False
+    if fuzz.ratio(board, company) >= 85:
+        return True
+    company_words = set(re.findall(r"[a-z0-9]+", company))
+    return bool(company_words) and company_words <= set(re.findall(r"[a-z0-9]+", board))
+
+
 async def _greenhouse_name_matches(client: ATSClient, slug: str, company_name: str) -> bool:
     try:
         response = await client.get(f"https://boards-api.greenhouse.io/v1/boards/{slug}", identifier="greenhouse")
@@ -94,6 +107,12 @@ async def discover_ats(client: ATSClient, company_name: str) -> Optional[Tuple[s
                 return ("ashby", slug)
         except ATSAPIError as e:
             logger.debug(f"Ashby probe error for '{slug}': {e}")
+
+        # These two expose the tenant's display name, so accept only on a name match.
+        for ats_type, module in (("smartrecruiters", smartrecruiters), ("recruitee", recruitee)):
+            board_name = await module.board_company_name(client, slug)
+            if board_name and _names_match(board_name, company_name):
+                return (ats_type, slug)
 
     return None
 

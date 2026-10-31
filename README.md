@@ -14,7 +14,7 @@
 
 ## Why
 
-- **Indian sources, deduplicated.** Instahyre, Hirist, Indeed India, LinkedIn, and companies' own Greenhouse/Lever/Ashby boards. The same posting on four sites shows up once, with the best apply link (the company's ATS wins).
+- **Indian sources, deduplicated.** Instahyre, Hirist, Indeed India, LinkedIn, and companies' own Greenhouse, Lever, Ashby, SmartRecruiters and Recruitee boards. The same posting on four sites shows up once, with the best apply link (the company's ATS wins).
 - **An explainable score, not a black box.** Every match shows its breakdown: skills 35, title 20, experience 15, location 10, freshness 10, salary 5, source quality 5. India-specific noise is penalised: staffing/C2H listings, "stack spam" job descriptions, ghost reposts, mandatory-CS-degree filters.
 - **Your geography.** Onsite cities, hybrid-acceptable metros, and India-eligible remote roles. US-only "remote" jobs are filtered out.
 - **The company list grows itself.** When any source mentions a company, JobRadar probes for its public ATS board and polls it directly from then on.
@@ -75,7 +75,7 @@ Step-by-step: **[docs/self-hosting.md](docs/self-hosting.md)**.
 
 | Source | What | Notes |
 |---|---|---|
-| ATS boards (Greenhouse, Lever, Ashby) | Company career pages, directly | Highest quality; auto-discovered |
+| ATS boards (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee) | Company career pages, directly | Highest quality; auto-discovered |
 | Instahyre | Indian tech jobs | Search API; no descriptions published |
 | Hirist | Indian tech jobs | Descriptions backfilled from the detail API |
 | Indeed India (via JobSpy) | Broad coverage | Searched by your cities × titles |

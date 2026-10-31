@@ -6,7 +6,7 @@ Undocumented endpoints break without warning. If a source starts failing, check 
 
 | `--sources` name | Source | How it's pulled | Caveats |
 |---|---|---|---|
-| `ats` | Greenhouse, Lever, Ashby | Public board APIs per company (`companies.ats_type/ats_slug`), plus auto-discovery | Highest quality. Coverage = how many companies you know (`data/companies.csv`) |
+| `ats` | Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee | Public board APIs per company (`companies.ats_type/ats_slug`), plus auto-discovery | Highest quality. Coverage = how many companies you know (`data/companies.csv`). SmartRecruiters is filtered to India postings |
 | `instahyre` | Instahyre | Public job-search JSON API, full corpus | No descriptions anywhere; scores on title and skills |
 | `hirist` | Hirist (tech only) | Search JSON API per search term | Search omits descriptions; `scripts.backfill_descriptions --source hirist` fills them |
 | `jobspy` | Indeed India | `python-jobspy`, your cities × target titles + remote sweep | JobSpy's other scrapers are broken or irrelevant for India |
@@ -35,4 +35,4 @@ Never scrape personal profiles. Job posts only.
 
 ## Ideas (contributions welcome)
 
-Indian companies increasingly use **Zoho Recruit, Keka, Darwinbox, Freshteam, SmartRecruiters, Workable and Recruitee**. Each exposes public career pages, and an adapter for any of them, plus discovery like `app/integrations/ats/discovery.py`, would add thousands of jobs. See [adding-a-source.md](adding-a-source.md).
+Indian companies increasingly use **Zoho Recruit, Keka, Darwinbox, Freshteam and Workable**. Each exposes public career pages, and an adapter for any of them, plus discovery like `app/integrations/ats/discovery.py`, would add thousands of jobs. See [adding-a-source.md](adding-a-source.md).
