@@ -1,0 +1,34 @@
+Welcome to {{ app_name }}!
+
+Hi {{ user_name }},
+
+Welcome to {{ app_name }} - your smart job search companion! We're excited to help you discover amazing career opportunities that match your skills and interests.
+
+ACTIVATE YOUR ACCOUNT:
+{{ activation_link }}
+
+GET STARTED:
+Once you activate your account, you can:
+- Search thousands of job opportunities
+- Save jobs you're interested in
+- Set up personalized job alerts
+- Track your applications
+- Get career insights and recommendations
+
+WHY CHOOSE {{ app_name }}?
+We aggregate job listings from top companies and job boards, so you don't have to search multiple sites. Our intelligent matching system helps you find roles that truly fit your experience and career goals.
+
+IMPORTANT: This activation link will expire in 24 hours for security reasons. If you need a new link, just try logging in again and we'll send you a fresh one.
+
+If you have any questions or need help getting started, don't hesitate to reach out to our support team at {{ support_email }}.
+
+Welcome aboard!
+The {{ app_name }} Team
+
+---
+{{ company_name }} © {{ current_year }}. All rights reserved.
+Visit our website: {{ app_url }}
+Contact support: {{ support_email }}
+{% if unsubscribe_url %}Unsubscribe: {{ unsubscribe_url }}{% endif %}
+
+This email was sent to {{ recipient_email or 'you' }}.

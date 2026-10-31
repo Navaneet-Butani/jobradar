@@ -1,0 +1,12 @@
+{{ digest_kind }} digest — {{ total_matches }} new match{{ 'es' if total_matches != 1 else '' }}
+
+{% for section in sections %}
+{{ section.profile_name }}
+{% for job in section.matches %}
+- [{{ job.score }}] {{ job.title }} — {{ job.company }} ({{ job.location }})
+{% if job.explanation %}  "{{ job.explanation }}"
+{% endif %}  {{ job.apply_url }}
+{% endfor %}
+{% endfor %}
+
+Open your feed: {{ app_url }}

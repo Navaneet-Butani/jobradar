@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Your weekly summary — {{ app_name }}{% endblock %}
+
+{% block header %}
+<h1>Weekly summary</h1>
+{% endblock %}
+
+{% block content %}
+<p><strong>{{ new_matches_this_week }}</strong> new match{{ 'es' if new_matches_this_week != 1 else '' }} this week.</p>
+<p><strong>{{ applications_this_week }}</strong> application{{ 's' if applications_this_week != 1 else '' }} sent this week ({{ total_applications }} total tracked).</p>
+
+{% if by_status %}
+<h3>Pipeline</h3>
+<ul>
+{% for status, count in by_status.items() %}
+    <li>{{ status | capitalize }}: {{ count }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if due_count > 0 %}
+<h3>Follow-ups due</h3>
+<div class="alert alert-warning">
+    <strong>{{ due_count }}</strong> application{{ 's' if due_count != 1 else '' }} need{{ '' if due_count != 1 else 's' }} a follow-up.
+    <ul style="margin-top: 10px; margin-bottom: 0;">
+    {% for app in due_applications %}
+        <li>{{ app.job_title }} — {{ app.company_name }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="button-center">
+    <a href="{{ app_url }}/tracker" class="button">Open tracker</a>
+</div>
+{% endblock %}

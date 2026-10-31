@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ total_matches }} new match{{ 'es' if total_matches != 1 else '' }} — {{ app_name }}{% endblock %}
+
+{% block header %}
+<h1>{{ digest_kind }} digest</h1>
+<div class="subtitle">{{ total_matches }} new match{{ 'es' if total_matches != 1 else '' }} since your last visit</div>
+{% endblock %}
+
+{% block content %}
+{% for section in sections %}
+<h3>{{ section.profile_name }}</h3>
+
+{% for job in section.matches %}
+<div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin: 16px 0; background-color: #fafafa;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <a href="{{ job.apply_url }}" style="color: #1f2937; text-decoration: none; font-size: 18px; font-weight: bold;">{{ job.title }}</a>
+                <p style="margin: 4px 0 0 0; color: #6b7280;">{{ job.company }} · {{ job.location }}</p>
+            </td>
+            <td width="60" align="right" valign="top">
+                <span style="display: inline-block; background-color: #3b82f6; color: #ffffff; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: bold;">{{ job.score }}</span>
+            </td>
+        </tr>
+    </table>
+
+    {% if job.explanation %}
+    <p style="margin: 10px 0 0 0; color: #4b5563; font-style: italic;">"{{ job.explanation }}"</p>
+    {% endif %}
+
+    <div style="margin-top: 14px;">
+        <a href="{{ job.apply_url }}" class="button" style="font-size: 14px; padding: 8px 18px; margin: 0;">Apply</a>
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+<div class="button-center">
+    <a href="{{ app_url }}" class="button">Open your feed</a>
+</div>
+{% endblock %}

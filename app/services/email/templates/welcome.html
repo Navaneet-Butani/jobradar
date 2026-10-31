@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to {{ app_name }}!{% endblock %}
+
+{% block header %}
+<h1>Welcome to {{ app_name }}!</h1>
+<div class="subtitle">Your career journey starts here</div>
+{% endblock %}
+
+{% block content %}
+<h2>Hi {{ user_name }},</h2>
+
+<p>Welcome to {{ app_name }} - your smart job search companion! We're excited to help you discover amazing career opportunities that match your skills and interests.</p>
+
+<div class="button-center">
+    <a href="{{ activation_link }}" class="button">Activate Your Account</a>
+</div>
+
+<div class="alert alert-info">
+    <strong>Get Started:</strong> Once you activate your account, you can:
+    <ul style="margin-top: 10px; margin-bottom: 0;">
+        <li>Search thousands of job opportunities</li>
+        <li>Save jobs you're interested in</li>
+        <li>Set up personalized job alerts</li>
+        <li>Track your applications</li>
+        <li>Get career insights and recommendations</li>
+    </ul>
+</div>
+
+<h3>Why Choose {{ app_name }}?</h3>
+<p>We aggregate job listings from top companies and job boards, so you don't have to search multiple sites. Our intelligent matching system helps you find roles that truly fit your experience and career goals.</p>
+
+<p><strong>Important:</strong> This activation link will expire in 24 hours for security reasons. If you need a new link, just try logging in again and we'll send you a fresh one.</p>
+
+<p>If you have any questions or need help getting started, don't hesitate to reach out to our support team at <a href="mailto:{{ support_email }}">{{ support_email }}</a>.</p>
+
+<p>Welcome aboard!</p>
+<p><strong>The {{ app_name }} Team</strong></p>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+    <p style="font-size: 14px; color: #6b7280;">
+        If the button above doesn't work, you can copy and paste this link into your browser:
+    </p>
+    <div class="code-block">{{ activation_link }}</div>
+</div>
+{% endblock %}

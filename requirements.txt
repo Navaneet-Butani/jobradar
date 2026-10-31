@@ -1,0 +1,43 @@
+# Core framework
+fastapi[standard]==0.115.4   # latest stable FastAPI
+uvicorn[standard]==0.31.0    # ASGI server with reload, websockets, etc.
+
+# Config & env
+pydantic-settings==2.6.0     # Pydantic v2 settings management
+
+# Database & ORM
+sqlalchemy[asyncio]==2.0.25  # SQLAlchemy 2.0 with async support
+asyncpg==0.29.0              # async PostgreSQL driver
+psycopg2-binary==2.9.12       # sync PostgreSQL driver for alembic migrations
+alembic==1.13.3              # database migrations
+
+# Redis (caching & rate limiting)
+redis==5.1.1                 # async Redis client
+# redis-py-bloom removed — not on PyPI anymore; bloom_filter.py already falls back to Redis sets when absent
+
+# Security
+passlib[bcrypt]==1.7.4       # password hashing
+bcrypt==4.0.1                 # pinned — passlib 1.7.4's backend detection reads bcrypt.__about__,
+                               # removed in bcrypt>=4.1; unpinned installs break every hash_password() call
+pyjwt[crypto]==2.9.0         # JWT handling with crypto algorithms
+
+# Utils
+httpx==0.27.2                # async HTTP client
+tenacity==9.0.0              # retry logic (e.g., DB reconnects)
+pytz==2024.2                 # timezone utilities
+psutil==6.0.0                # system and process utilities
+rapidfuzz==3.14.5            # fuzzy string matching for dedup/company resolution
+html2text==2025.4.15         # HTML-to-text conversion (RemoteOK description parsing)
+python-jobspy==1.1.82        # Indeed scraper wrapper — pinned, upstream changes break signatures
+beautifulsoup4==4.15.0       # HTML parsing for the LinkedIn guest endpoints (was only a transitive dep)
+
+# Additional dependencies for integrations
+cryptography==41.0.7         # encryption for API credentials
+
+# Email service dependencies
+boto3==1.35.36               # optional Amazon SES transport (EMAIL_TRANSPORT=ses)
+jinja2==3.1.4                # email template engine
+
+# Resume text extraction (Phase 3 Task 3 — application packet generator)
+pypdf==5.1.0                 # PDF -> text; pure-Python, no OCR, no native build
+python-docx==1.1.2           # DOCX -> text

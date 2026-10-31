@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ total_jobs }} New Jobs - {{ app_name }}{% endblock %}
+
+{% block header %}
+<h1>🎯 New Job Matches!</h1>
+<div class="subtitle">{{ total_jobs }} {{ 'job' if total_jobs == 1 else 'jobs' }} found matching your criteria</div>
+{% endblock %}
+
+{% block content %}
+<h2>Hi {{ user_name }},</h2>
+
+<p>Great news! We found <strong>{{ total_jobs }}</strong> new {{ 'job' if total_jobs == 1 else 'jobs' }} that {{ 'matches' if total_jobs == 1 else 'match' }} your job alert criteria.</p>
+
+{% if alerts|length == 1 %}
+<div class="alert alert-info">
+    <strong>Alert:</strong> {{ alerts[0].name }}<br>
+    <strong>Criteria:</strong> {{ alerts[0].criteria_summary }}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <strong>{{ alerts|length }} Alerts Triggered:</strong>
+    <ul style="margin-top: 10px; margin-bottom: 0;">
+    {% for alert in alerts %}
+        <li><strong>{{ alert.name }}</strong> ({{ alert.job_count }} {{ 'job' if alert.job_count == 1 else 'jobs' }})</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<h3>🔥 Top Job Matches</h3>
+
+{% for job in jobs[:10] %}
+<div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #fafafa;">
+    <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+        <div style="flex: 1;">
+            <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 20px;">
+                <a href="{{ job.apply_url }}" style="color: #3b82f6; text-decoration: none;">{{ job.title }}</a>
+            </h4>
+            <p style="margin: 0; color: #6b7280; font-size: 16px;">
+                <strong>{{ job.company }}</strong> • {{ job.location }}
+                {% if job.is_remote %} • 🏠 Remote{% endif %}
+            </p>
+        </div>
+        {% if job.relevance_score %}
+        <div style="background-color: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;">
+            {{ job.relevance_score }}% Match
+        </div>
+        {% endif %}
+    </div>
+
+    {% if job.salary_range %}
+    <p style="margin: 8px 0; color: #059669; font-weight: bold; font-size: 16px;">
+        💰 {{ job.salary_range }}
+    </p>
+    {% endif %}
+
+    {% if job.description_preview %}
+    <p style="margin: 12px 0; color: #4b5563; line-height: 1.5;">
+        {{ job.description_preview }}
+    </p>
+    {% endif %}
+
+    {% if job.skills %}
+    <div style="margin: 12px 0;">
+        <strong style="color: #374151; font-size: 14px;">Skills:</strong>
+        {% for skill in job.skills %}
+        <span style="display: inline-block; background-color: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin: 2px 4px 2px 0;">{{ skill }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display: flex; justify-content: between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+        <span style="color: #6b7280; font-size: 14px;">Posted {{ job.posted_date }}</span>
+        <a href="{{ job.apply_url }}" class="button" style="font-size: 14px; padding: 8px 16px;">Apply Now</a>
+    </div>
+</div>
+{% endfor %}
+
+{% if jobs|length > 10 %}
+<div class="alert alert-info">
+    <p><strong>And {{ jobs|length - 10 }} more jobs!</strong></p>
+    <p>Visit your <a href="{{ app_url }}/dashboard">dashboard</a> to see all matching jobs and manage your alerts.</p>
+</div>
+{% endif %}
+
+<div class="button-center">
+    <a href="{{ app_url }}/dashboard" class="button">View All Jobs</a>
+    <a href="{{ app_url }}/alerts" class="button button-secondary">Manage Alerts</a>
+</div>
+
+<h3>💡 Tips for Better Matches</h3>
+<ul>
+    <li><strong>Refine your keywords:</strong> Add specific skills or technologies you want to work with</li>
+    <li><strong>Set salary expectations:</strong> Help us filter jobs that meet your requirements</li>
+    <li><strong>Location preferences:</strong> Specify if you're open to remote work or prefer specific cities</li>
+    <li><strong>Update regularly:</strong> Keep your alerts current as your preferences change</li>
+</ul>
+
+<div class="alert alert-warning">
+    <strong>Important:</strong> Job opportunities are time-sensitive. Popular positions may fill quickly, so we recommend applying promptly to jobs that interest you.
+</div>
+
+<p>Good luck with your job search!</p>
+
+<p>Best regards,<br>
+<strong>The {{ app_name }} Team</strong></p>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+    <p style="font-size: 14px; color: #6b7280;">
+        <a href="{{ preferences_url }}">Update email preferences</a> |
+        <a href="{{ unsubscribe_url }}">Unsubscribe from job alerts</a>
+    </p>
+    <p style="font-size: 12px; color: #9ca3af;">
+        You're receiving this because you have active job alerts.
+        You can manage your alerts and preferences in your dashboard.
+    </p>
+</div>
+{% endblock %}

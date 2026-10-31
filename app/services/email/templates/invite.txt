@@ -1,0 +1,24 @@
+You're invited to {{ app_name }}
+
+Hi {{ user_name }},
+
+{{ invited_by }} added you to {{ app_name }}, a private job feed. It pulls
+software roles from a dozen boards every day, scores each one against your own
+profile, and tracks what you've applied to.
+
+SET UP YOUR ACCOUNT:
+{{ invite_link }}
+
+Once you're in, fill out your matching profile: target titles, skills, cities
+and salary floor. That's what turns twenty thousand listings into a short list
+worth reading.
+
+This link expires in {{ expires_days }} days and works once. If it lapses, ask
+{{ invited_by }} to send another.
+
+If you weren't expecting this, ignore the email. Nothing happens until the
+link is opened.
+
+---
+{{ company_name }} © {{ current_year }}
+This email was sent to {{ recipient_email or 'you' }}.

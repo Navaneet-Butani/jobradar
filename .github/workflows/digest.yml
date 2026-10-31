@@ -1,0 +1,61 @@
+name: digest
+
+# Daily new-match digest and the Monday stats summary.
+#
+# Needs a working EMAIL_TRANSPORT in secrets (smtp or resend). Without one the
+# script logs that email is unconfigured and exits non-zero, which surfaces as a
+# failed run rather than silently sending nothing.
+
+on:
+  schedule:
+    # 08:00 IST daily — top new matches per profile
+    - cron: '30 2 * * *'
+    # 08:30 IST Monday — application stats, follow-ups due, feed health
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: 'Which digest to send'
+        type: choice
+        options: [daily, weekly]
+        required: true
+        default: daily
+
+jobs:
+  digest:
+    if: github.event_name == 'workflow_dispatch' || vars.JOBRADAR_SCHEDULE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Pick digest kind for this trigger
+        id: kind
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "kind=${{ github.event.inputs.kind }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 3 * * 1" ]; then
+            echo "kind=weekly" >> "$GITHUB_OUTPUT"
+          else
+            echo "kind=daily" >> "$GITHUB_OUTPUT"
+          fi
+
+      - run: python -m scripts.send_digest ${{ steps.kind.outputs.kind }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          EMAIL_TRANSPORT: ${{ secrets.EMAIL_TRANSPORT }}
+          SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}
+          SES_FROM_NAME: ${{ secrets.SES_FROM_NAME }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}

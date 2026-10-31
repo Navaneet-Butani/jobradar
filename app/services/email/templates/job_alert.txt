@@ -1,0 +1,67 @@
+{{ total_jobs }} New Job Matches - {{ app_name }}
+
+Hi {{ user_name }},
+
+Great news! We found {{ total_jobs }} new {{ 'job' if total_jobs == 1 else 'jobs' }} that {{ 'matches' if total_jobs == 1 else 'match' }} your job alert criteria.
+
+{% if alerts|length == 1 %}
+ALERT: {{ alerts[0].name }}
+CRITERIA: {{ alerts[0].criteria_summary }}
+{% else %}
+{{ alerts|length }} ALERTS TRIGGERED:
+{% for alert in alerts %}
+- {{ alert.name }} ({{ alert.job_count }} {{ 'job' if alert.job_count == 1 else 'jobs' }})
+{% endfor %}
+{% endif %}
+
+TOP JOB MATCHES:
+
+{% for job in jobs[:10] %}
+{{ loop.index }}. {{ job.title }}
+   Company: {{ job.company }}
+   Location: {{ job.location }}{% if job.is_remote %} (Remote){% endif %}
+   {% if job.salary_range %}Salary: {{ job.salary_range }}{% endif %}
+   {% if job.relevance_score %}Match Score: {{ job.relevance_score }}%{% endif %}
+   Posted: {{ job.posted_date }}
+   {% if job.skills %}Skills: {{ job.skills|join(', ') }}{% endif %}
+
+   {% if job.description_preview %}{{ job.description_preview }}{% endif %}
+
+   Apply: {{ job.apply_url }}
+
+{% endfor %}
+
+{% if jobs|length > 10 %}
+AND {{ jobs|length - 10 }} MORE JOBS!
+Visit your dashboard to see all matching jobs: {{ app_url }}/dashboard
+{% endif %}
+
+QUICK ACTIONS:
+- View all jobs: {{ app_url }}/dashboard
+- Manage alerts: {{ app_url }}/alerts
+- Update preferences: {{ preferences_url }}
+
+TIPS FOR BETTER MATCHES:
+- Refine your keywords: Add specific skills or technologies you want to work with
+- Set salary expectations: Help us filter jobs that meet your requirements
+- Location preferences: Specify if you're open to remote work or prefer specific cities
+- Update regularly: Keep your alerts current as your preferences change
+
+IMPORTANT: Job opportunities are time-sensitive. Popular positions may fill quickly, so we recommend applying promptly to jobs that interest you.
+
+Good luck with your job search!
+
+Best regards,
+The {{ app_name }} Team
+
+---
+MANAGE YOUR PREFERENCES:
+Update email preferences: {{ preferences_url }}
+Unsubscribe from job alerts: {{ unsubscribe_url }}
+
+You're receiving this because you have active job alerts.
+You can manage your alerts and preferences in your dashboard.
+
+{{ company_name }} © {{ current_year }}. All rights reserved.
+Visit our website: {{ app_url }}
+Contact support: {{ support_email }}

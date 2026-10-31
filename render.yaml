@@ -1,0 +1,83 @@
+# Render blueprint for the JobRadar API (free tier).
+#
+# Deploy: Render dashboard -> New -> Blueprint -> point at this repo.
+# Everything here is config; the only thing left to supply is the secret
+# values marked `sync: false`, which Render prompts for on first deploy.
+#
+# Free-tier behaviour worth knowing: the service spins down after 15 minutes
+# idle and cold-starts in ~50s. That is acceptable for a personal deployment, and the
+# frontend shows a loading state rather than looking broken.
+#
+# Scheduled work does NOT run here — ingest, matching, digests and outreach all
+# run on GitHub Actions (see .github/workflows/). Render only serves the API.
+
+services:
+  - type: web
+    name: jobradar-api
+    runtime: python
+    plan: free
+    region: singapore          # closest free region to India
+    branch: main
+    # Migrations run on every deploy; the baseline builds an empty database.
+    buildCommand: |
+      pip install -r requirements.txt
+      alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # NOT /docs -- ENVIRONMENT=production sets docs_url=None (app/main.py),
+    # so /docs 404s and Render would fail every deploy as unhealthy.
+    #
+    # And NOT /health/check either, which is what this was: that endpoint opens
+    # a database connection, and Render probes roughly every 10 seconds. With a
+    # 3+2 pool, each probe that arrives while the pool is busy sits on the
+    # request for the full 10s pool_timeout and then fails -- so a burst of real
+    # traffic turned into a self-sustaining "QueuePool limit reached" spiral and
+    # 500s on the dashboard. /ping answers from memory and touches nothing.
+    healthCheckPath: /api/v1/health/ping
+    envVars:
+      # PYTHON_VERSION deliberately NOT set here. It lives in `.python-version`
+      # at the repo root instead, because that file applies however the service
+      # was created -- a Blueprint reads this file, but a Web Service created
+      # by hand in the dashboard never does, and then Render falls through to
+      # its own default. That default is now 3.14, on which asyncpg 0.29 fails
+      # to compile (_PyLong_AsByteArray changed signature), which is exactly
+      # the 3.12-not-3.14 constraint CLAUDE.md records.
+      #
+      # `3.12` rather than a pinned patch: Render resolves it to the newest
+      # 3.12.x it actually has, so this cannot break on a patch release being
+      # unavailable. If you ever set PYTHON_VERSION in the dashboard it takes
+      # priority over the file, so leave it unset.
+
+      # --- required secrets: set these in the Render dashboard ---
+      - key: DATABASE_URL          # Supabase POOLER URI, postgresql+asyncpg://
+        sync: false
+      - key: REDIS_URL             # optional: Upstash rediss:// URI (caching, rate limits)
+        sync: false
+      - key: SECRET_KEY            # must match the GitHub Actions secret exactly,
+        sync: false                # stored SMTP passwords are encrypted with a key derived from it
+      - key: GEMINI_API_KEY
+        sync: false
+
+      # --- frontend wiring: set once Vercel has given you a domain ---
+      - key: FRONTEND_URL          # https://<project>.vercel.app
+        sync: false
+      - key: CORS_ORIGINS          # ["https://<project>.vercel.app"]
+        sync: false
+
+      # --- system email (digests). Pick one transport. ---
+      - key: EMAIL_TRANSPORT
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SES_FROM_EMAIL        # must be on a domain verified in Resend
+        sync: false
+      - key: SES_FROM_NAME
+        value: JobRadar
+
+
+      # --- invite-only: no public signup ---
+      - key: REQUIRE_EMAIL_VERIFICATION
+        value: "true"
+      - key: ALLOW_REGISTRATION
+        value: "false"
+      - key: ENVIRONMENT
+        value: production

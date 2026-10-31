@@ -1,0 +1,78 @@
+Weekly Job Digest - {{ app_name }}
+{{ week_range }} • {{ total_jobs }} new opportunities
+
+Hi {{ user_name }},
+
+Here's your weekly summary of job opportunities! We found {{ total_jobs }} new jobs across all your alerts this week.
+
+WEEK SUMMARY:
+Week of: {{ week_range }}
+Active alerts: {{ alerts|length }}
+Total matches: {{ total_jobs }}
+
+ALERT PERFORMANCE:
+
+{% for alert in alerts %}
+{{ alert.alert_name }}: {{ alert.job_count }} {{ 'job' if alert.job_count == 1 else 'jobs' }}
+{% if alert.top_jobs %}
+Top matches:
+{% for job in alert.top_jobs[:3] %}
+- {{ job.title }} at {{ job.company }}{% if job.location %} ({{ job.location }}){% endif %}
+{% endfor %}
+{% if alert.top_jobs|length > 3 %}
+... and {{ alert.top_jobs|length - 3 }} more
+{% endif %}
+{% endif %}
+
+{% endfor %}
+
+WEEKLY HIGHLIGHTS:
+
+{% if trending_skills %}
+TRENDING SKILLS in your job matches:
+{{ trending_skills|join(', ') }}
+{% endif %}
+
+{% if new_companies %}
+NEW COMPANIES posting jobs:
+{% for company in new_companies %}
+- {{ company }}
+{% endfor %}
+{% endif %}
+
+QUICK ACTIONS:
+- View all jobs: {{ app_url }}/dashboard
+- Manage alerts: {{ app_url }}/alerts
+- Update preferences: {{ preferences_url }}
+
+WEEKLY TIPS - OPTIMIZE YOUR JOB SEARCH:
+- Review and apply: Check your saved jobs and apply to positions that interest you
+- Update your profile: Keep your skills and experience current
+- Network actively: Connect with professionals in your industry
+- Practice interviews: Prepare for opportunities that may come your way
+
+JOB MARKET INSIGHT:
+{% if total_jobs > 50 %}
+The job market is active this week with many new opportunities. Consider being selective and focusing on roles that best match your career goals.
+{% elif total_jobs > 20 %}
+A steady flow of new opportunities this week. Take time to thoroughly research companies and roles before applying.
+{% else %}
+Fewer new postings this week, which is normal for certain periods. Use this time to improve your profile and prepare for future opportunities.
+{% endif %}
+
+Keep up the great work on your job search! Remember, the best opportunities often go to candidates who are well-prepared and act quickly.
+
+Best of luck,
+The {{ app_name }} Team
+
+---
+MANAGE YOUR PREFERENCES:
+Update email preferences: {{ preferences_url }}
+Unsubscribe from weekly digest: {{ unsubscribe_url }}
+
+This weekly digest summarizes activity across all your job alerts.
+You can adjust the frequency or disable this digest in your preferences.
+
+{{ company_name }} © {{ current_year }}. All rights reserved.
+Visit our website: {{ app_url }}
+Contact support: {{ support_email }}

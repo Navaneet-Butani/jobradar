@@ -1,0 +1,50 @@
+# Local, all-in-one JobRadar:  docker compose up -d --build
+# Then: http://localhost:3000  (API docs: http://localhost:8000/docs)
+# First-time setup and ingest commands are in README.md -> Quick start.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: jobradar
+      POSTGRES_PASSWORD: jobradar
+      POSTGRES_DB: jobradar
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobradar"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://jobradar:jobradar@db:5432/jobradar
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  web:
+    build: ./web
+    environment:
+      API_BASE_URL: http://api:8000
+      # Session cookies are Secure in production builds. Browsers accept that on
+      # http://localhost; set "false" only if you serve over plain http elsewhere.
+      COOKIE_SECURE: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

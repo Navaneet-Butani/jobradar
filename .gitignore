@@ -1,0 +1,44 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# .python-version IS tracked on purpose: Render reads it to build with 3.12
+# (asyncpg 0.29 does not compile on 3.14).
+
+# Node / Next.js
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Logs and local data
+logs/
+*.log
+dump.rdb
+*.sqlite3
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code local session config
+.claude/

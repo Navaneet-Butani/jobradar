@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Your {{ app_name }} Email{% endblock %}
+
+{% block header %}
+<h1>Verify Your Email</h1>
+<div class="subtitle">One quick step to secure your account</div>
+{% endblock %}
+
+{% block content %}
+<h2>Hi {{ user_name }},</h2>
+
+<p>Thank you for signing up for {{ app_name }}! To complete your registration and start exploring amazing job opportunities, please verify your email address.</p>
+
+<div class="button-center">
+    <a href="{{ verification_link }}" class="button">Verify Email Address</a>
+</div>
+
+<div class="alert alert-info">
+    <strong>Why verify your email?</strong>
+    <ul style="margin-top: 10px; margin-bottom: 0;">
+        <li>Secure your account and enable password reset</li>
+        <li>Receive important account notifications</li>
+        <li>Get personalized job alerts (optional)</li>
+        <li>Access all {{ app_name }} features</li>
+    </ul>
+</div>
+
+<p>Once verified, you'll have full access to:</p>
+<ul>
+    <li><strong>Advanced Job Search:</strong> Filter by location, salary, remote work, and more</li>
+    <li><strong>Save & Organize:</strong> Bookmark jobs and organize them in custom folders</li>
+    <li><strong>Smart Alerts:</strong> Get notified when jobs matching your criteria are posted</li>
+    <li><strong>Application Tracking:</strong> Keep track of your job applications and their status</li>
+    <li><strong>Career Insights:</strong> Get personalized recommendations and market trends</li>
+</ul>
+
+<div class="alert alert-warning">
+    <strong>Important:</strong> This verification link will expire in 24 hours for security reasons. If the link expires, you can request a new one by trying to log in.
+</div>
+
+<p>If you didn't create an account with {{ app_name }}, you can safely ignore this email. No account has been created and no further emails will be sent.</p>
+
+<p>Ready to jumpstart your career? Let's get you verified!</p>
+
+<p>Best regards,</p>
+<p><strong>The {{ app_name }} Team</strong></p>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+    <p style="font-size: 14px; color: #6b7280;">
+        If the button above doesn't work, you can copy and paste this link into your browser:
+    </p>
+    <div class="code-block">{{ verification_link }}</div>
+    <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">
+        This link will expire in 24 hours for security reasons.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+Verify Your {{ app_name }} Email
+
+Hi {{ user_name }},
+
+Thank you for signing up for {{ app_name }}! To complete your registration and start exploring amazing job opportunities, please verify your email address.
+
+VERIFY YOUR EMAIL:
+{{ verification_link }}
+
+WHY VERIFY YOUR EMAIL?
+- Secure your account and enable password reset
+- Receive important account notifications
+- Get personalized job alerts (optional)
+- Access all {{ app_name }} features
+
+WHAT YOU'LL GET ACCESS TO:
+- Advanced Job Search: Filter by location, salary, remote work, and more
+- Save & Organize: Bookmark jobs and organize them in custom folders
+- Smart Alerts: Get notified when jobs matching your criteria are posted
+- Application Tracking: Keep track of your job applications and their status
+- Career Insights: Get personalized recommendations and market trends
+
+IMPORTANT: This verification link will expire in 24 hours for security reasons. If the link expires, you can request a new one by trying to log in.
+
+If you didn't create an account with {{ app_name }}, you can safely ignore this email. No account has been created and no further emails will be sent.
+
+Ready to jumpstart your career? Let's get you verified!
+
+Best regards,
+The {{ app_name }} Team
+
+---
+{{ company_name }} © {{ current_year }}. All rights reserved.
+Visit our website: {{ app_url }}
+Contact support: {{ support_email }}
+
+This email was sent to {{ recipient_email or 'you' }}.
+This verification link will expire in 24 hours for security reasons.

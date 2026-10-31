@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}You're invited to {{ app_name }}{% endblock %}
+
+{% block header %}
+<h1>You're invited</h1>
+<div class="subtitle">{{ invited_by }} added you to {{ app_name }}</div>
+{% endblock %}
+
+{% block content %}
+<h2>Hi {{ user_name }},</h2>
+
+<p>{{ app_name }} is a private job feed. It pulls software roles from a dozen boards every day, scores each one against your own profile, and tracks what you've applied to.</p>
+
+<p>Choose a password to claim your account:</p>
+
+<div class="button-center">
+    <a href="{{ invite_link }}" class="button">Set up my account</a>
+</div>
+
+<p>Once you're in, fill out your matching profile: target titles, skills, cities and salary floor. That's what turns twenty thousand listings into a short list worth reading.</p>
+
+<div class="alert alert-warning">
+    <strong>This link expires in {{ expires_days }} days</strong> and works once. If it lapses, ask {{ invited_by }} to send another.
+</div>
+
+<p>If you weren't expecting this, ignore the email. Nothing happens until the link is opened.</p>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+    <p style="font-size: 14px; color: #6b7280;">
+        If the button doesn't work, paste this into your browser:
+    </p>
+    <div class="code-block">{{ invite_link }}</div>
+</div>
+{% endblock %}

@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+/*
+  Design system — "signal" palette. JobRadar scans noisy job boards for
+  a small number of specific candidates; the palette and the match-card
+  arc meter both lean on that instrument/readout idea rather than a
+  generic dashboard look. Warm paper instead of stark white in light
+  mode, cool graphite instead of pure black in dark mode — both carry a
+  slight blue-teal bias toward the accent instead of reading as neutral
+  defaults.
+*/
+:root {
+  --bg: #f5f4f0;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #ebe9e3;
+  /*
+     Three text tiers, all of which have to clear WCAG AA (4.5:1) because all
+     three are used for real copy, not decoration -- ink-faint carries form
+     hints, timestamps, counts and whole explanatory paragraphs. It used to be
+     #8a8f9b, which measured 2.94:1 on this background and failed outright.
+     Pulling it up compresses the gap to ink-soft, and that is the right
+     trade: a tier nobody can read is not a tier.
+  */
+  --ink: #1b1f27;
+  --ink-soft: #5b6270;
+  --ink-faint: #666c7a;
+  --border: #e2dfd8;
+  --border-strong: #cfcbc0;
+
+  --accent: #0e8577;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3f3f0;
+  --accent-soft-ink: #0e6b60;
+
+  --score-strong: #2f7d4f;
+  --score-strong-bg: #e4f3e9;
+  --score-moderate: #a5760a;
+  --score-moderate-bg: #fbf0da;
+  --score-weak: #9c4a3e;
+  --score-weak-bg: #f6e6e3;
+
+  --danger: #b3261e;
+  --danger-soft: #fbe9e7;
+
+  --shadow-card: 0 1px 2px rgba(27, 31, 39, 0.04), 0 1px 8px rgba(27, 31, 39, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14181f;
+    --bg-elevated: #1b212b;
+    --bg-sunken: #0f1319;
+    --ink: #e7e5df;
+    --ink-soft: #98a0ad;
+    --ink-faint: #888f9c;
+    --border: #2a303c;
+    --border-strong: #384051;
+
+    --accent: #3fcdb6;
+    --accent-ink: #08201c;
+    --accent-soft: #17332f;
+    --accent-soft-ink: #7de3d1;
+
+    --score-strong: #57c97f;
+    --score-strong-bg: #163825;
+    --score-moderate: #e0b23c;
+    --score-moderate-bg: #3a2e12;
+    --score-weak: #e08578;
+    --score-weak-bg: #3a211d;
+
+    --danger: #e5766c;
+    --danger-soft: #3a211d;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 8px rgba(0, 0, 0, 0.24);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14181f;
+  --bg-elevated: #1b212b;
+  --bg-sunken: #0f1319;
+  --ink: #e7e5df;
+  --ink-soft: #98a0ad;
+  --ink-faint: #888f9c;
+  --border: #2a303c;
+  --border-strong: #384051;
+
+  --accent: #3fcdb6;
+  --accent-ink: #08201c;
+  --accent-soft: #17332f;
+  --accent-soft-ink: #7de3d1;
+
+  --score-strong: #57c97f;
+  --score-strong-bg: #163825;
+  --score-moderate: #e0b23c;
+  --score-moderate-bg: #3a2e12;
+  --score-weak: #e08578;
+  --score-weak-bg: #3a211d;
+
+  --danger: #e5766c;
+  --danger-soft: #3a211d;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 8px rgba(0, 0, 0, 0.24);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-ink: var(--accent-soft-ink);
+  --color-score-strong: var(--score-strong);
+  --color-score-strong-bg: var(--score-strong-bg);
+  --color-score-moderate: var(--score-moderate);
+  --color-score-moderate-bg: var(--score-moderate-bg);
+  --color-score-weak: var(--score-weak);
+  --color-score-weak-bg: var(--score-weak-bg);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-display: var(--font-plex-sans);
+  --font-body: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  /* Tabular figures everywhere by default: this UI is mostly counts, scores and
+     dates, and proportional digits make columns of them jitter. */
+  font-variant-numeric: tabular-nums;
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-soft-ink);
+}
+
+/*
+  Focus. Inputs across the app set `outline-none` and style their border on
+  focus, which leaves keyboard users with nothing on buttons, links, checkboxes
+  or table controls. One ring, defined once, on :focus-visible only so pointer
+  users never see it.
+*/
+/* `html` prefix so this outranks Tailwind's preflight and any `outline-none`
+   utility, which otherwise leave outline-color at currentColor and give a ring
+   that changes colour per element. Longhands, not the shorthand, for the same
+   reason. */
+html :focus-visible {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--accent);
+  outline-offset: 2px;
+}
+
+html input:focus-visible,
+html textarea:focus-visible,
+html select:focus-visible {
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+/* Tactile press. Cheap, and it makes the whole app feel less like a document. */
+button:not(:disabled):active,
+a[role="button"]:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active,
+  a[role="button"]:active {
+    transform: none;
+  }
+}
+
+/* Checkboxes inherit the browser accent rather than staying system-blue. */
+input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+/* Scrollbars inside panels, so a scrolling table doesn't punch a bright
+   system-grey bar through a dark surface. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+  font-family: var(--font-display);
+}
+
+.job-html {
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  max-width: 65ch;
+}
+.job-html p, .job-html ul, .job-html ol { margin-block: 0.9em; }
+.job-html ul, .job-html ol { padding-inline-start: 1.25em; }
+.job-html li { margin-block: 0.35em; }
+.job-html li::marker { color: var(--ink-faint); }
+.job-html strong, .job-html b { color: var(--ink); font-weight: 600; }
+.job-html a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.job-html h1, .job-html h2, .job-html h3, .job-html h4 { color: var(--ink); margin-block: 1em 0.5em; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

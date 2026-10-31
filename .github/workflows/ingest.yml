@@ -1,0 +1,72 @@
+name: ingest
+
+# Scheduled ingest = the "worker". GitHub Actions is free (unlimited minutes on
+# public repos, 2,000/month on private), so nothing has to run 24/7.
+#
+# Off until you opt in: set the repository VARIABLE `JOBRADAR_SCHEDULE` to
+# `true` (Settings -> Secrets and variables -> Actions -> Variables) after
+# adding the secrets below. Manual runs (Run workflow) always work.
+#
+# Secrets: DATABASE_URL (Supabase TRANSACTION pooler, port 6543), SECRET_KEY,
+#          optional REDIS_URL, optional GEMINI_API_KEY (LLM re-rank).
+# Variables (optional): INGEST_SOURCES_FULL / INGEST_SOURCES_MIDDAY /
+#          INGEST_SOURCES_EVENING to change which sources each run pulls.
+
+on:
+  schedule:
+    - cron: '30 1 * * *'    # 07:00 IST - full run
+    - cron: '30 7 * * *'    # 13:00 IST - midday
+    - cron: '30 13 * * *'   # 19:00 IST - evening (ATS only)
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: 'Comma-separated sources (see scripts/run_ingest.py)'
+        required: false
+        default: 'ats,hirist,jobspy'
+
+jobs:
+  ingest:
+    if: github.event_name == 'workflow_dispatch' || vars.JOBRADAR_SCHEDULE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Pick sources for this trigger
+        id: sources
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "sources=${{ github.event.inputs.sources }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "30 1 * * *" ]; then
+            echo "sources=${{ vars.INGEST_SOURCES_FULL || 'instahyre,ats,jobspy,hirist,linkedin,remoteok,himalayas,remotive,arbeitnow' }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "30 7 * * *" ]; then
+            echo "sources=${{ vars.INGEST_SOURCES_MIDDAY || 'ats,jobspy,hirist,linkedin' }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sources=${{ vars.INGEST_SOURCES_EVENING || 'ats' }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Ingests, enriches from raw payloads, then matches new jobs to every profile.
+      - run: python -m scripts.run_ingest --sources ${{ steps.sources.outputs.sources }}
+
+      # Hirist's search feed omits descriptions; its detail endpoint has them.
+      # Capped to fit the time budget; resumes from the newest gap next run.
+      - name: Backfill Hirist descriptions
+        if: contains(steps.sources.outputs.sources, 'hirist')
+        continue-on-error: true
+        run: python -m scripts.backfill_descriptions --source hirist --limit 600
+
+      # LinkedIn guest search returns cards only. Paced at 1 req / 3s, so morning only.
+      - name: Backfill LinkedIn descriptions
+        if: contains(steps.sources.outputs.sources, 'linkedin') && github.event.schedule != '30 7 * * *'
+        continue-on-error: true
+        run: python -m scripts.backfill_descriptions --source linkedin --limit 200
