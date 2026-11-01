@@ -1,30 +1,73 @@
-# JobRadar
+<div align="center">
 
-**A self-hosted job radar for Indian software engineers.** JobRadar pulls IT jobs from nine sources (including Indian boards no other open-source tool covers), removes cross-posted duplicates, scores every job against *your* profile with an explainable 0–100 score, and tracks your applications. It runs on free tiers, so it costs **₹0/month**.
+# 📡 JobRadar
 
-> Job boards show you everything. JobRadar shows you the 20 jobs worth your morning, and why.
+### Your personal job radar for Indian software engineers.
 
-![Match feed: jobs ranked against your profile](docs/screenshot-feed.png)
+**Stop scrolling five job boards every morning.** JobRadar pulls IT jobs from 9+ sources, merges the duplicates, scores every job against *your* profile from 0–100, explains each score, and pings your phone when a strong match lands.
 
-<details>
-<summary>Job page with the score breakdown</summary>
+Self-hosted · Open source · Runs on free tiers for **₹0/month**
 
-![Why this score](docs/screenshot-job.png)
-</details>
+[![CI](https://github.com/Navaneet-Butani/jobradar/actions/workflows/ci.yml/badge.svg)](https://github.com/Navaneet-Butani/jobradar/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)
+![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-## Why
+[Quick start](#-quick-start-5-minutes) · [Features](#-what-you-get) · [Deploy free](#-deploy-for-0month) · [Sources](#-sources) · [Contribute](#-contributing)
 
-- **Indian sources, deduplicated.** Instahyre, Hirist, Indeed India, LinkedIn, and companies' own Greenhouse, Lever, Ashby, SmartRecruiters and Recruitee boards. The same posting on four sites shows up once, with the best apply link (the company's ATS wins).
-- **An explainable score, not a black box.** Every match shows its breakdown: skills 35, title 20, experience 15, location 10, freshness 10, salary 5, source quality 5. India-specific noise is penalised: staffing/C2H listings, "stack spam" job descriptions, ghost reposts, mandatory-CS-degree filters.
-- **Your geography.** Onsite cities, hybrid-acceptable metros, and India-eligible remote roles. US-only "remote" jobs are filtered out.
-- **The company list grows itself.** When any source mentions a company, JobRadar probes for its public ATS board and polls it directly from then on.
-- **Alerts on your phone.** New strong matches are pushed to Telegram, Discord, Slack or ntfy after every ingest, each job once.
-- **Built for the application grind.** Kanban tracker with follow-up reminders, an application packet (tailored summary, pre-filled answers, recruiter contact), and paced outreach email sent from your own Gmail, with reply and bounce tracking over IMAP.
-- **Set up in a minute.** Upload your resume and press **Fill from resume**: skills, target titles, experience and cities are suggested for you to review.
-- **Bring any AI, or none.** A free Gemini key, any OpenAI-compatible API (Groq, OpenRouter, OpenAI), or a fully local model through **Ollama** re-ranks your top matches with a one-line "why this fits you", sharpens the resume autofill, and drafts follow-ups. Without one, everything still works on the rule-based scoring.
-- **Never auto-applies.** You review and press send, always.
+</div>
 
-## Quick start (Docker)
+---
+
+> Job boards show you everything. **JobRadar shows you the 20 jobs worth your morning, and why.**
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshot-feed.png" alt="Match feed: jobs ranked against your profile"></td>
+    <td width="50%"><img src="docs/screenshot-job.png" alt="Job page with the score breakdown"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Match feed</b>: every job scored against your profile, best first</td>
+    <td align="center"><b>Why this score</b>: a transparent breakdown, not a black box</td>
+  </tr>
+</table>
+
+## 😩 The problem
+
+If you're job hunting in Indian tech, your morning looks like this: Naukri, LinkedIn, Instahyre, Hirist, Indeed, ten company career pages. The same job appears on four sites. Half the "remote" roles are US-only. A third are staffing agencies reposting the same C2H listing. You find the good one three days late.
+
+## ✨ What you get
+
+| | |
+|---|---|
+| 🇮🇳 **Built for India** | Instahyre, Hirist, Indeed India, LinkedIn, and company career boards. Knows Bengaluru = Bangalore and Gurugram = Gurgaon. Hides US-only "remote" jobs. |
+| 🧹 **One job, once** | Cross-posted duplicates are merged. You get the best apply link, and the company's own careers page wins. |
+| 🎯 **A score you can read** | 0–100 per job: skills 35 · title 20 · experience 15 · location 10 · freshness 10 · salary 5 · source 5. Click any job to see exactly why it scored that way. |
+| 🚫 **Noise filter** | Penalises staffing/C2H listings, "stack spam" descriptions that list 40 technologies, ghost reposts, and mandatory-CS-degree filters. |
+| 📄 **Set up from your resume** | Upload your resume and press **Fill from resume**. Skills, target titles, experience and cities are suggested for you to review. |
+| 📱 **Alerts on your phone** | New strong matches go to **Telegram, Discord, Slack or ntfy** after every run, each job once. |
+| 🏢 **A company list that grows** | When any source mentions a company, JobRadar finds its Greenhouse / Lever / Ashby / SmartRecruiters / Recruitee board and polls it directly from then on. |
+| 🗂️ **Application tracker** | Kanban board, follow-up reminders, and an application packet with a tailored summary, pre-filled answers and the recruiter contact. |
+| ✉️ **Outreach from your own Gmail** | Paced emails you write and approve, with reply and bounce tracking over IMAP. |
+| 🤖 **Any AI, or none** | Gemini free tier, any OpenAI-compatible API (Groq, OpenRouter, OpenAI) or a **fully local model via Ollama** re-ranks top matches with a one-line "why this fits you". Without one, the rule-based scoring still works. |
+| 🔒 **Yours, and private** | Self-hosted and invite-only. Your resume and applications stay in your database. **It never auto-applies.** You press send, always. |
+
+## 🆚 Why not just use the job boards?
+
+| | Job boards | JobRadar |
+|---|:---:|:---:|
+| Jobs from many boards in one feed | ❌ | ✅ |
+| Duplicates merged | ❌ | ✅ |
+| Ranked against *your* skills and experience | Partly | ✅ |
+| Explains each ranking | ❌ | ✅ |
+| Filters out staffing spam and US-only "remote" | ❌ | ✅ |
+| Polls companies' own career pages directly | ❌ | ✅ |
+| Phone alerts for strong matches only | Noisy | ✅ |
+| Your data stays with you | ❌ | ✅ |
+| Cost | Free or ₹₹₹ for "premium" | **₹0** |
+
+## 🚀 Quick start (5 minutes)
 
 ```bash
 git clone https://github.com/Navaneet-Butani/jobradar && cd jobradar
@@ -39,10 +82,16 @@ docker compose exec api python -m scripts.seed_companies
 docker compose exec api python -m scripts.run_ingest --sources ats,hirist,remotive,himalayas
 ```
 
-Log in, open **Profile**, upload your resume and press **Fill from resume** (or set skills, titles, experience and cities yourself). The next ingest searches for exactly those, and the feed ranks against them. Run `python -m scripts.run_matching` to re-score existing jobs right away. Want to see the app first? `python -m scripts.seed_demo` creates a demo account with two example profiles.
+Then:
+
+1. Log in and open **Profile**.
+2. Upload your resume and press **Fill from resume**, or type your skills, titles, experience and cities.
+3. Run `python -m scripts.run_matching` to score jobs now. Later ingests score new jobs automatically.
+
+> 👀 **Just want to look around?** `python -m scripts.seed_demo` creates a demo account with two example profiles.
 
 <details>
-<summary>Without Docker (Python 3.12 + Node 22 + PostgreSQL)</summary>
+<summary><b>Without Docker</b> (Python 3.12 + Node 22 + PostgreSQL)</summary>
 
 ```bash
 python3.12 -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
@@ -55,62 +104,96 @@ uvicorn app.main:app --reload --port 8000             # API docs at /docs
 cd web && npm ci && npm run dev                       # http://localhost:3000
 ```
 
-Use Python 3.12, not 3.13+: pinned `asyncpg`/`pandas` builds have no wheels for newer versions.
+Use Python 3.12, not 3.13 or newer: pinned `asyncpg`/`pandas` builds have no wheels for newer versions.
 </details>
 
-## Deploy for ₹0/month
+## 💸 Deploy for ₹0/month
 
 | Piece | Free service |
 |---|---|
 | Database | Supabase (500 MB; retention jobs keep you inside it) |
-| Scheduled ingest, matching, digests | GitHub Actions (no always-on worker needed) |
+| Scheduled ingest, matching, alerts | GitHub Actions, 3 runs a day (no always-on server) |
 | API | Render free web service (`render.yaml` included) |
 | Web | Vercel hobby |
 | Email (optional) | Resend free tier, or any SMTP server |
 | AI (optional) | Gemini Flash free tier, Groq free tier, or local Ollama |
 
-Step-by-step: **[docs/self-hosting.md](docs/self-hosting.md)**.
+Step-by-step guide: **[docs/self-hosting.md](docs/self-hosting.md)**.
 
-## Sources
+## 🔌 Sources
 
 | Source | What | Notes |
 |---|---|---|
-| ATS boards (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee) | Company career pages, directly | Highest quality; auto-discovered |
-| Instahyre | Indian tech jobs | Search API; no descriptions published |
-| Hirist | Indian tech jobs | Descriptions backfilled from the detail API |
-| Indeed India (via JobSpy) | Broad coverage | Searched by your cities × titles |
-| LinkedIn (guest pages) | Broad coverage | Small, rate-limited budget per run |
-| Remotive, Himalayas, Arbeitnow, RemoteOK | Remote boards | Filtered to India-eligible remote |
+| **Company career boards**: Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee | Straight from the employer | Highest quality, auto-discovered |
+| **Instahyre** | Indian tech jobs | No descriptions published; scored on title and skills |
+| **Hirist** | Indian tech jobs | Descriptions filled in from the detail API |
+| **Indeed India** (via JobSpy) | Broad coverage | Searched by your cities × titles |
+| **LinkedIn** (guest pages) | Broad coverage | Opt-in, small rate-limited budget |
+| **Remotive, Himalayas, Arbeitnow, RemoteOK** | Remote boards | Filtered to India-eligible remote |
 
-Naukri and HiringCafe are not supported: both require defeating anti-bot protection. Details in [docs/sources.md](docs/sources.md).
+None need an API key. Naukri and HiringCafe are not supported because both require defeating anti-bot protection. Details in [docs/sources.md](docs/sources.md).
 
-## How it works
+## ⚙️ How it works
 
 ```
-sources ──> JobProcessor (extract → normalise salary/location/skills/experience
-            → dedupe → company resolution → store raw payload) ──> Postgres
-                                                                    │
-           matching: hard filters → weighted score → noise rules → optional LLM re-rank
-                                                                    │
-                          FastAPI ──> Next.js (feed · search · tracker · outreach)
+ 9+ sources ──▶ normalise (salary · location · skills · experience)
+             ──▶ dedupe ──▶ resolve company ──▶ store raw payload ──▶ Postgres
+                                                                        │
+     matching: hard filters ▶ weighted score ▶ noise rules ▶ optional AI re-rank
+                                                                        │
+          FastAPI ──▶ Next.js (feed · search · tracker · outreach)    ──▶ 📱 alerts
 ```
 
-Ingest and serving are decoupled: the web app only reads the database, so a broken scraper never slows a page. More in [docs/architecture.md](docs/architecture.md).
+Ingest and serving are separate: the web app only reads the database, so a broken scraper never slows a page. Raw payloads are kept, so a source that changes shape can be re-parsed without fetching it again. More in [docs/architecture.md](docs/architecture.md).
 
-## Contributing
+**Stack:** Python 3.12 · FastAPI · SQLAlchemy 2 (async) · PostgreSQL full-text search · Next.js · Tailwind · shadcn/ui · GitHub Actions
+
+## ❓ FAQ
+
+<details>
+<summary><b>Is this legal? Will I get banned?</b></summary>
+
+JobRadar only reads public job postings, slowly, with a rate limiter on every source. It never scrapes personal profiles and never submits applications. Some sites' terms restrict automated access, so enable only the sources you're comfortable with. LinkedIn is off by default.
+</details>
+
+<details>
+<summary><b>Do I need an AI API key?</b></summary>
+
+No. Scoring is rule-based and fully explainable. An AI model only adds a one-line "why this fits you" to top matches and sharpens resume autofill. You can use a free Gemini or Groq key, or run a local model with Ollama.
+</details>
+
+<details>
+<summary><b>I'm not in Bengaluru. Does it work for my city?</b></summary>
+
+Yes. Set any cities on your profile: onsite, hybrid-acceptable, or remote-only. Searches and scoring follow your profile, and common spellings (Baroda/Vadodara, Gurgaon/Gurugram, Bombay/Mumbai) are understood.
+</details>
+
+<details>
+<summary><b>Can my friends use my instance?</b></summary>
+
+Yes. It's invite-only: an admin sends invites, and each person keeps their own profiles, feed and tracker.
+</details>
+
+<details>
+<summary><b>Is it only for India?</b></summary>
+
+It's tuned for India (sources, cities, salary in LPA, remote-eligibility rules), but the ATS boards and remote sources are global. Adding a source for another country is mostly a config block.
+</details>
+
+## 🤝 Contributing
 
 The most valuable contributions are small:
 
-- **Add companies** to [`data/companies.csv`](data/companies.csv), ideally with their Greenhouse/Lever/Ashby slug. Every row improves everyone's coverage.
-- **Add a source.** Most sources are a config block, not a parser: see [docs/adding-a-source.md](docs/adding-a-source.md).
-- **Improve matching rules**, with a test in `tests/`.
+- 🏢 **Add companies** to [`data/companies.csv`](data/companies.csv), ideally with their career-board slug. Every row improves coverage for everyone.
+- 🔌 **Add a source.** Zoho Recruit, Keka, Darwinbox and Workable are wanted. Most sources are a config block, not a parser: see [docs/adding-a-source.md](docs/adding-a-source.md).
+- 🎯 **Improve matching rules**, with a test in `tests/`.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). If JobRadar saved you a morning of scrolling, **a ⭐ helps other job seekers find it.**
 
-## Responsible use
+## ⚖️ Responsible use
 
-JobRadar collects public job postings for personal job search. It never scrapes personal profiles and never submits applications. Some sources' terms restrict automated access. Enable only the sources you are comfortable using, keep request rates low (built-in rate limiters are on by default), and respect each site's terms. You are responsible for how you run it.
+JobRadar collects public job postings for personal job search. It never scrapes personal profiles and never submits applications. Enable only the sources you are comfortable using, keep request rates low (the built-in rate limiters are on by default), and respect each site's terms. You are responsible for how you run it.
 
-## License
+## 📄 License
 
 [MIT](LICENSE)
